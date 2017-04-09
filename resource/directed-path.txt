@@ -1,0 +1,2 @@
+demo:NumericExample.java:36@demo:NumericExample.java:37
+demo:NumericExample.java:40@demo:NumericExample.java:43
