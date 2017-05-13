@@ -4,9 +4,14 @@ import java.util.ArrayList;
 
 import edu.xjtu.jpf.abstraction.Branch;
 import edu.xjtu.jpf.abstraction.DirectedPath;
+import edu.xjtu.jpf.util.HelperClass;
 import gov.nasa.jpf.Config;
 import gov.nasa.jpf.search.heuristic.HeuristicState;
 import gov.nasa.jpf.search.heuristic.SimplePriorityHeuristic;
+import gov.nasa.jpf.symbc.numeric.Constraint;
+import gov.nasa.jpf.symbc.numeric.PCChoiceGenerator;
+import gov.nasa.jpf.symbc.numeric.PathCondition;
+import gov.nasa.jpf.vm.ChoiceGenerator;
 import gov.nasa.jpf.vm.Step;
 import gov.nasa.jpf.vm.SystemState;
 import gov.nasa.jpf.vm.Transition;
@@ -159,6 +164,8 @@ public class PathDirectedHeuristic extends SimplePriorityHeuristic{
 	        //ÅÐ¶ÏÊÇ·ñÎªÖÕ½á×´Ì¬
 	        if (!isEndState())
 	        	generateChildren();
+	        else
+	        	showPathCondition();
 	      }
 	    }
 	    
@@ -215,5 +222,48 @@ public class PathDirectedHeuristic extends SimplePriorityHeuristic{
 			}
 		}
 		return false;
+	}
+	
+	public void showPathCondition() {
+		System.out.println("++++++++++++++++++++ Boundary ++++++++++++++++++++++");
+		ChoiceGenerator<?> cg = vm.getChoiceGenerator();
+		PCChoiceGenerator prevPcGen;		
+		if (cg instanceof PCChoiceGenerator) {
+			prevPcGen = (PCChoiceGenerator) cg;
+		} else {
+			prevPcGen = (PCChoiceGenerator) cg.getPreviousChoiceGeneratorOfType(PCChoiceGenerator.class);
+		}
+		
+		PathCondition pc = null;
+		ArrayList<String> unsatCore = null;
+		if (prevPcGen != null) {
+			pc = prevPcGen.getCurrentPC();
+			pc.solve();
+			unsatCore = pc.unsatCore;
+		}
+		
+		if (pc != null) {
+			Constraint constraint = pc.header;
+			Transition trail;
+			while (constraint != null ) {
+				System.out.println("==================Constraint====================");
+				System.out.println(constraint);
+				System.out.println(constraint.hashCode());
+				System.out.println("==================Transition====================");
+				trail = constraint.getTrail();
+				if (trail != null) {
+					HelperClass.printTrail(trail);					
+				}
+				constraint = constraint.and;
+			}
+			
+			if (unsatCore != null) {
+				System.out.println("[The Unsatisfiable Core]:");
+				for (String s : unsatCore) {
+					System.out.println(s);
+				}
+			}
+			System.out.println("++++++++++++++++++++ Boundary ++++++++++++++++++++++");
+		}
 	}
 }

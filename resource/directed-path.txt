@@ -1,2 +1,4 @@
-demo:NumericExample.java:36@demo:NumericExample.java:37
-demo:NumericExample.java:40@demo:NumericExample.java:43
+demo:MyClassOriginal.java:24@demo:MyClassOriginal.java:27
+demo:MyClassOriginal.java:30@demo:MyClassOriginal.java:32
+demo:MyClassOriginal.java:32@demo:MyClassOriginal.java:35
+demo:MyClassOriginal.java:38@demo:MyClassOriginal.java:41
